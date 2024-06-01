@@ -1,0 +1,19 @@
+{
+  "name": "emirhan/eticdot-php",
+  "description": "Easy to use e-commerce application.",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Emirhan\\EticdotPhp\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "cppmonger",
+      "email": "keskinemirhan@gmail.com"
+    }
+  ],
+  "require": {
+    "ext-mysqli": "*"
+  }
+}
