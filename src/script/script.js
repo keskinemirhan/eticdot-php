@@ -75,6 +75,7 @@ function loadFavStatus() {
 }
 function basketBtnEvent() {
   $(".basket-btn").on("click", function (e) {
+    e.stopPropagation();
     e.target.innerHTML = `    <div class="spinner-border" role="status">
     <span class="sr-only"></span>
   </div>`;
@@ -83,5 +84,3 @@ function basketBtnEvent() {
     }, 1000);
   });
 }
-basketBtnEvent();
-updateNavBasket();
