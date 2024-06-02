@@ -65,40 +65,4 @@ function c_prod_card($prod_id, $prod_name, $price, $prev_price, $vendor_name, $i
             </button>
         </div>
     </a>
-    <script>
-        // basket
-        const item = {
-            price: <?php echo $price ?>,
-            prevPrice: <?php echo $prev_price ?>,
-            prodName: "<?php echo $prod_name ?>",
-            vendorName: "<?php echo $vendor_name ?>",
-            imageUrl: "<?php echo $image_url ?>",
-            prodId: "<?php echo $prod_id ?>",
-        };
-        const basketButton = document.querySelector(`.basket-btn-${item.prodId}`);
-        basketButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-
-            let basketItems = JSON.parse(localStorage.getItem("basketItems"));
-            if (!basketItems) basketItems = [];
-            const existingIndex = basketItems.findIndex(
-                (itm) => itm.prodId === item.prodId
-            );
-            if (existingIndex !== -1) {
-                basketItems[existingIndex].count++;
-            } else {
-                basketItems.push({
-                    ...item,
-                    count: 1
-                });
-            }
-            localStorage.setItem("basketItems", JSON.stringify(basketItems));
-            new Toast({
-                message: "Added to Basket",
-                type: "success",
-            });
-            updateNavBasket();
-        });
-    </script>
 <?php } ?>
