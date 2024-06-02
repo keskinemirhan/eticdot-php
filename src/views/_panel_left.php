@@ -31,7 +31,7 @@ $admin = $stmt->get_result()->fetch_row();
             <a href="admin-category-list.php" class="panel-item">Category List</a>
             <a href="admin-category-add.php" class="panel-item">Add Category</a>
         </div>
-        <a href="/admin-logout.php" class="panel-item">Logout</a>
+        <a href="admin-logout.php" class="panel-item">Logout</a>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

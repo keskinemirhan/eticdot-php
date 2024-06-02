@@ -1,5 +1,5 @@
 <nav>
-    <a href="/" class="nav-logo">
+    <a href="" class="nav-logo">
         <i class="bi bi-shop-window logo-icon text-blue"></i>
         <span class="logo-name d-none d-lg-block">Etic<span class="logo-dot text-blue">dot</span>.com</span>
     </a>
@@ -14,11 +14,11 @@
         </form>
     </div>
     <div class="nav-account d-none d-lg-flex">
-        <a href="/login.php" class="nav-btn nav-user nav-profile">
+        <a href="login.php" class="nav-btn nav-user nav-profile">
             <i class="bi bi-person-circle user-icon text-blue"></i>
             <span class="profile">Login</span>
         </a>
-        <a href="/basket.php" class="nav-btn nav-basket basket-icon">
+        <a href="basket.php" class="nav-btn nav-basket basket-icon">
             <i class="bi bi-basket2-fill text-blue"></i>
             <span> <span class="basket-count-nav">0</span> Items</span></a>
         <a href="/favorites.php" class="nav-btn">
@@ -47,15 +47,15 @@
         </form>
     </div>
     <div class="nav-m-list">
-        <a href="/login" class="nav-m-btn nav-profile">
+        <a href="login.php" class="nav-m-btn nav-profile">
             <i class="bi bi-person-circle user-icon text-blue"></i>
             <span class="profile">Login</span>
         </a>
-        <a href="/basket" class="nav-m-btn">
+        <a href="basket.php" class="nav-m-btn">
             <i class="bi bi-basket2-fill text-blue"></i>
             <span> <span class="basket-count-nav">0</span> Items</span>
         </a>
-        <a href="/favorites" class="nav-m-btn">
+        <a href="favorites.php" class="nav-m-btn">
             <i class="bi bi-heart-fill text-blue"></i>
             <span>Favorites</span>
         </a>
@@ -66,7 +66,7 @@
         searchButtons.forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
-                window.location.replace("/search");
+                window.location.replace("search");
             });
         });
         const profileIndicators = document.querySelectorAll(".profile");
@@ -75,7 +75,7 @@
         const user = JSON.parse(localStorage.getItem("logUser"));
         if (user) {
             profileLinks.forEach((link) => {
-                link.setAttribute("href", "/profile");
+                link.setAttribute("href", "profile.php");
             });
             profileIcons.forEach((icon) => {
                 icon.classList.add("text-green");

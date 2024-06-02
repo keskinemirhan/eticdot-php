@@ -1,4 +1,4 @@
 <?php
 session_start();
 session_destroy();
-header("Location: /admin-login.php");
+header("Location: admin-login.php");

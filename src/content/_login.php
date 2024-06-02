@@ -5,7 +5,7 @@
         <input id="email" class="auth-input" placeholder="Email*" type="email" />
         <input id="password" class="auth-input" placeholder="Password*" type="password" />
         <button id="login-submit" class="auth-submit">Login</button>
-        <a class="c-register text-blue" href="/register.php">Or Register</a>
+        <a class="c-register text-blue" href="register.php">Or Register</a>
     </form>
 </div>
 <style>
@@ -64,7 +64,7 @@
                     password: user.password,
                 })
             );
-            window.location.replace("/");
+            window.location.replace("");
         }
     });
 </script>

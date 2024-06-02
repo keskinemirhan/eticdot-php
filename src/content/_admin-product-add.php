@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-<h1>Add Category</h1>
+<h1>Add Product</h1>
 <hr>
 
 <form enctype="multipart/form-data" method="post" class="mx-auto" action="admin-product-add.php">
