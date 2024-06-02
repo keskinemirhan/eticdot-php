@@ -59,9 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $email,
                 password_hash($password, PASSWORD_BCRYPT)
             );
-            session_start();
+            if (session_status() != PHP_SESSION_ACTIVE) session_start();
+            $userId = $stmt_execute("select id from user where email = ?", "s", $email)->fetch_row()[0];
             $_SESSION["userIsLoggedIn"] = true;
-            $_SESSION["userId"] = true;
+            $_SESSION["userId"] = $userId;
             echo "<script>window.location.replace('index.php');</script>";
         }
     }

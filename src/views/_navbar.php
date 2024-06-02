@@ -1,3 +1,17 @@
+<?php
+
+session_start();
+$loggedIn = false;
+if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
+    include "service/dbconnect.php";
+    $userId = $_SESSION["userId"];
+    $userQuery = $stmt_execute("select name from user where id = ?", "s", $userId);
+    if ($userQuery->num_rows > 0) {
+        $username = $userQuery->fetch_row()[0];
+        $loggedIn = true;
+    }
+}
+?>
 <nav>
     <a href="" class="nav-logo">
         <i class="bi bi-shop-window logo-icon text-blue"></i>
@@ -14,10 +28,18 @@
         </form>
     </div>
     <div class="nav-account d-none d-lg-flex">
-        <a href="login.php" class="nav-btn nav-user nav-profile">
-            <i class="bi bi-person-circle user-icon text-blue"></i>
-            <span class="profile">Login</span>
-        </a>
+
+        <?php if ($loggedIn) { ?>
+            <a href="profile.php" class="nav-btn nav-profile">
+                <i class="bi bi-person-circle user-icon text-green"></i>
+                <span class="profile"><?php echo $username ?></span>
+            </a>
+        <?php } else { ?>
+            <a href="login.php" class="nav-btn nav-profile">
+                <i class="bi bi-person-circle user-icon text-blue"></i>
+                <span class="profile">Login</span>
+            </a>
+        <?php } ?>
         <a href="basket.php" class="nav-btn nav-basket basket-icon">
             <i class="bi bi-basket2-fill text-blue"></i>
             <span> <span class="basket-count-nav">0</span> Items</span></a>
@@ -47,10 +69,17 @@
         </form>
     </div>
     <div class="nav-m-list">
-        <a href="login.php" class="nav-m-btn nav-profile">
-            <i class="bi bi-person-circle user-icon text-blue"></i>
-            <span class="profile">Login</span>
-        </a>
+        <?php if ($loggedIn) { ?>
+            <a href="profile.php" class="nav-m-btn nav-profile">
+                <i class="bi bi-person-circle user-icon text-green"></i>
+                <span class="profile"><?php echo $username ?></span>
+            </a>
+        <?php } else { ?>
+            <a href="login.php" class="nav-m-btn nav-profile">
+                <i class="bi bi-person-circle user-icon text-blue"></i>
+                <span class="profile">Login</span>
+            </a>
+        <?php } ?>
         <a href="basket.php" class="nav-m-btn">
             <i class="bi bi-basket2-fill text-blue"></i>
             <span> <span class="basket-count-nav">0</span> Items</span>
@@ -73,19 +102,6 @@
         const profileIcons = document.querySelectorAll(".user-icon");
         const profileLinks = document.querySelectorAll(".nav-profile");
         const user = JSON.parse(localStorage.getItem("logUser"));
-        if (user) {
-            profileLinks.forEach((link) => {
-                link.setAttribute("href", "profile.php");
-            });
-            profileIcons.forEach((icon) => {
-                icon.classList.add("text-green");
-                icon.classList.remove("text-blue");
-            });
-            profileIndicators.forEach((pf) => {
-                pf.innerHTML = user.name;
-            });
-        }
-
         const mButton = document.querySelector(".nav-m-btn");
         const mClose = document.querySelector(".close-btn");
         const mMenu = document.querySelector(".nav-m-menu");
