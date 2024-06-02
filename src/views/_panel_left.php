@@ -17,8 +17,8 @@ $admin = $stmt->get_result()->fetch_row();
         </div>
         <button data-target="product" class="panel-item panel-drop-btn"><i class="bi bi-box2-fill"></i> Products</button>
         <div id="product" class="panel-dropdown">
-            <button class="panel-item">Product List</button>
-            <button class="panel-item">Add Product</button>
+            <a href="admin-product-list.php" class="panel-item">Product List</a>
+            <a href="admin-product-add.php" class="panel-item">Add Product</a>
         </div>
 
         <button data-target="order" class="panel-item panel-drop-btn"><i class="bi bi-truck"></i> Orders</button>

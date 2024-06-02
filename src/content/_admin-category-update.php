@@ -27,12 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_REQUEST["delete"])) {
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_REQUEST["delete"])) {
     $name = $_POST["name"];
-    if (isset($_FILES["image"])) {
+    if (isset($_FILES["image"]) && !empty($_FILES["image"]["name"])) {
         unlink($category[2]);
         $uploadDir = "images/" . strval(time()) . $_FILES["image"]["name"];
         move_uploaded_file($_FILES["image"]["tmp_name"], $uploadDir);
-        $imageUpdateStmt = $mysqli->prepare("UPDATE category set image = ?");
-        $imageUpdateStmt->bind_param("s", $uploadDir);
+        $imageUpdateStmt = $mysqli->prepare("UPDATE category set image = ? where id = ?");
+        $imageUpdateStmt->bind_param("ss", $uploadDir, $id);
         $imageUpdateStmt->execute();
         $imageUpdateStmt->close();
     }
