@@ -1,19 +1,11 @@
-<?php /*
-const { price, prevPrice, prodName, prodId, vendorName, imageUrl } =
-Astro.props;
-const item = {
-price,
-prevPrice,
-prodName,
-vendorName,
-imageUrl,
-prodId,
-};
-*/
-?>
 <?php
-function c_prod_card($prod_id, $prod_name, $price, $prev_price, $vendor_name, $image_url)
-{
+include_once("service/user-auth-utils.php");
+$loginInfo = $getUserLoginInfo();
+
+static $prod_card_script_exists = false;
+
+$c_prod_card = function ($prod_id, $prod_name, $price, $prev_price, $vendor_name, $image_url, $is_favorite = false) use ($loginInfo) {
+    $loggedIn = $loginInfo->loggedIn;
     $item = [
         "price" =>  $price,
         "prevPrice" =>  $prev_price,
@@ -28,12 +20,12 @@ function c_prod_card($prod_id, $prod_name, $price, $prev_price, $vendor_name, $i
         <div class="price-band bg-blue">
             <div class="price">
                 <div class="current-price"><?php echo $price . "$" ?></div>
-                <?php if ($prev_price) { ?>
+                <?php if ($prev_price != $price) { ?>
                     <div class="prev-price"><?php echo $prev_price . "$" ?></div>
                 <?php } ?>
             </div>
 
-            <?php if ($prev_price) { ?>
+            <?php if ($prev_price != $price) { ?>
 
                 <div class="sale bg-green">
                     <?php
@@ -43,7 +35,13 @@ function c_prod_card($prod_id, $prod_name, $price, $prev_price, $vendor_name, $i
             <?php } ?>
         </div>
         <div class="fav-btn-box">
-            <button data-item="<?php echo htmlspecialchars(json_encode($item)) ?>" class="<?php echo "fav-btn fav-btn-$prod_id" ?>"><i class="bi bi-heart"></i></button>
+            <button <?php if ($loggedIn) echo "data-prodId='$prod_id'" ?> class="fav-btn">
+                <?php if ($is_favorite) { ?>
+                    <i class="bi bi-heart-fill"></i>
+                <?php } else { ?>
+                    <i class="bi bi-heart"></i>
+                <?php } ?>
+            </button>
         </div>
         <div class="prod-img-wrapper">
             <img class="prod-img" src="<?php echo $image_url ?>" alt="" srcset="" />
@@ -60,7 +58,7 @@ function c_prod_card($prod_id, $prod_name, $price, $prev_price, $vendor_name, $i
             <i class="bi bi-star"></i>
         </div>
         <div class="basket-btn-wrapper">
-            <button data-item="<?php echo htmlspecialchars(json_encode($item)) ?>" class="<?php echo "basket-btn bg-green basket-btn-$prod_id" ?> ">
+            <button data-prodId="<?php echo htmlspecialchars($item["prodId"]) ?>" class="<?php echo "basket-btn bg-green basket-btn-$prod_id" ?> ">
                 <i class="bi bi-basket2-fill"></i> Add To Basket
             </button>
         </div>

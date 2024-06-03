@@ -1,7 +1,7 @@
 <?php
 function redirect($path)
 {
-    echo "<script>window.location.replace('$path');</script>";
+    echo "<script>window.location.href = '$path';</script>";
 }
 
 function isblank_post(string ...$fields)

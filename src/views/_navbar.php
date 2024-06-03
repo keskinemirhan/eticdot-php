@@ -1,6 +1,7 @@
 <?php
 
-session_start();
+if (session_status() != PHP_SESSION_ACTIVE)
+    session_start();
 $loggedIn = false;
 if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
     include "service/dbconnect.php";
@@ -43,7 +44,7 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
         <a href="basket.php" class="nav-btn nav-basket basket-icon">
             <i class="bi bi-basket2-fill text-blue"></i>
             <span> <span class="basket-count-nav">0</span> Items</span></a>
-        <a href="/favorites.php" class="nav-btn">
+        <a href="favorites.php" class="nav-btn">
             <i class="bi bi-heart-fill text-blue"></i>
             <span>Favorites</span>
         </a>

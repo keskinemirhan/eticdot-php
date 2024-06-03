@@ -25,21 +25,23 @@ function addToBasket(item) {
   localStorage.setItem("basketItems", JSON.stringify(basketItems));
 }
 
-function toggleFavorites(item) {
-  let prevItems = JSON.parse(localStorage.getItem("favItems") ?? "[]");
-  let flag = true;
-  const existingIndex = prevItems.findIndex(
-    (itm) => itm.prodId === item.prodId
-  );
-  if (existingIndex !== -1) {
-    prevItems.splice(existingIndex, 1);
-    flag = false;
+async function toggleFavorites(prodId) {
+  const form = new FormData();
+  form.set("prodId", prodId);
+
+  const response = await fetch("./api-favorite.php", {
+    credentials: "include",
+    body: form,
+    method: "POST",
+  });
+  const code = response.status;
+  if (code == 200) {
+    return "added";
+  } else if (code == 204) {
+    return "removed";
   } else {
-    flag = true;
-    prevItems.push(item);
+    return "error";
   }
-  localStorage.setItem("favItems", JSON.stringify(prevItems));
-  return flag;
 }
 
 function bindFavButton() {
@@ -48,11 +50,34 @@ function bindFavButton() {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       e.preventDefault();
-      const item = JSON.parse(btn.dataset.item);
-      if (toggleFavorites(item)) {
-        btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+      if (btn.dataset.prodid == undefined) {
+        window.location.href = "login.php";
       } else {
-        btn.innerHTML = '<i class="bi bi-heart"></i>';
+        btn.setAttribute("disabled", "true");
+        toggleFavorites(btn.dataset.prodid)
+          .catch((e) => {})
+          .then((status) => {
+            btn.removeAttribute("disabled");
+            if (status == "added") {
+              btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+              new Toast({
+                message: "Added to favorites",
+                type: "success",
+              });
+            } else if (status == "removed") {
+              btn.innerHTML = '<i class="bi bi-heart"></i>';
+              new Toast({
+                message: "Removed from favorites",
+                type: "success",
+              });
+            } else {
+              new Toast({
+                message: "Could not add to favorites.",
+                type: "danger",
+              });
+            }
+            btn.removeAttribute("disabled");
+          });
       }
     });
   });
@@ -84,3 +109,4 @@ function basketBtnEvent() {
     }, 1000);
   });
 }
+bindFavButton();
