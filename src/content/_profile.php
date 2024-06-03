@@ -1,3 +1,13 @@
+<?php
+include "service/utils.php";
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["logout"])) {
+  if (session_status() != PHP_SESSION_ACTIVE) {
+    session_start();
+  }
+  session_destroy();
+  redirect(".");
+}
+?>
 <div class="profile-container container mx-auto">
   <h1 class="p-header">Profile</h1>
   <div class="p-wrapper">
@@ -27,7 +37,9 @@
       </div>
     </div>
     <div class="d-flex justify-center">
-      <button class="auth-submit s-logout">Logout</button>
+      <form action="profile.php" method="post">
+        <button type="submit" value="true" name="logout" class="auth-submit s-logout">Logout</button>
+      </form>
     </div>
   </div>
 </div>
@@ -295,13 +307,9 @@
   const surname = document.querySelector(".profile-surname");
   const email = document.querySelector(".p-email");
   const loggedUser = JSON.parse(localStorage.getItem("logUser"));
-  if (!loggedUser) {
-    window.location.replace("login.php");
-  } else {
-    name.textContent = loggedUser.name;
-    surname.textContent = loggedUser.surname;
-    email.textContent = loggedUser.email;
-  }
+  name.textContent = loggedUser.name;
+  surname.textContent = loggedUser.surname;
+  email.textContent = loggedUser.email;
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("logUser");
     localStorage.removeItem("basketItems");
