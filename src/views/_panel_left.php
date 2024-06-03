@@ -1,5 +1,5 @@
 <?php
-include "./service/dbconnect.php";
+include "service/dbconnect.php";
 $stmt = $mysqli->prepare("SELECT name from admin where id = ?");
 $stmt->bind_param("s", $adminId);
 $stmt->execute();

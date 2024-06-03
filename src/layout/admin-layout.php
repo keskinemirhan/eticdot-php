@@ -13,7 +13,7 @@
 
 <body>
     <script src="script/toast.js"></script>
-    <?php include "./views/_panel_left.php" ?>
+    <?php include "views/_panel_left.php" ?>
     <div class="panel-screen">
         <?php include $childView ?>
     </div>

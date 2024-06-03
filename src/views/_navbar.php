@@ -13,7 +13,7 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
 }
 ?>
 <nav>
-    <a href="" class="nav-logo">
+    <a href="." class="nav-logo">
         <i class="bi bi-shop-window logo-icon text-blue"></i>
         <span class="logo-name d-none d-lg-block">Etic<span class="logo-dot text-blue">dot</span>.com</span>
     </a>

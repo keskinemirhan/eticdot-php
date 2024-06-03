@@ -1,7 +1,7 @@
 <?php
 $redirect = "admin-panel.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include "./service/dbconnect.php";
+    include "service/dbconnect.php";
     if (!isset($_REQUEST["email"]) || !isset($_REQUEST["password"])) {
         http_response_code(400);
         exit();

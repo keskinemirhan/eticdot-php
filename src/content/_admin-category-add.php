@@ -1,5 +1,4 @@
 <?php
-echo exec("whoami");
 $error = false;
 $errorStrings = [];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
