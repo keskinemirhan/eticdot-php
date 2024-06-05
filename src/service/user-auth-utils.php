@@ -1,5 +1,5 @@
 <?php
-include "service/dbconnect.php";
+include_once "service/dbconnect.php";
 class UserLoginInfo
 {
     public bool $loggedIn;

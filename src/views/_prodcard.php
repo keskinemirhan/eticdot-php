@@ -58,7 +58,7 @@ $c_prod_card = function ($prod_id, $prod_name, $price, $prev_price, $vendor_name
             <i class="bi bi-star"></i>
         </div>
         <div class="basket-btn-wrapper">
-            <button data-prodId="<?php echo htmlspecialchars($item["prodId"]) ?>" class="<?php echo "basket-btn bg-green basket-btn-$prod_id" ?> ">
+            <button <?php if ($loggedIn) echo "data-prodid='$prod_id'" ?> class="basket-btn bg-green ">
                 <i class="bi bi-basket2-fill"></i> Add To Basket
             </button>
         </div>

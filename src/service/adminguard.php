@@ -1,5 +1,5 @@
 <?php
-include "service/dbconnect.php";
+include_once "service/dbconnect.php";
 $adminLogin = "admin-login.php";
 
 session_start();

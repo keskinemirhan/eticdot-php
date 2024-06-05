@@ -1,14 +1,22 @@
-function updateNavBasket() {
-  let basketItems = JSON.parse(localStorage.getItem("basketItems"));
-  const navIndicators = document.querySelectorAll(".basket-count-nav");
-
-  if (!basketItems) basketItems = [];
-  let totalItems = 0;
-  basketItems.forEach((itm) => {
-    totalItems += Number(itm.count);
+function updateNavBasket(count) {
+  const basketCountIndicators = document.querySelectorAll(".basket-count-nav");
+  basketCountIndicators.forEach((ind) => {
+    ind.textContent = count;
   });
-  navIndicators.forEach((itm) => {
-    itm.innerText = totalItems;
+}
+
+function updateTotalCount(total) {
+  const totalIndicators = document.querySelectorAll(".m-total-price");
+  totalIndicators.forEach((ind) => {
+    if (total > 0) ind.textContent = total + "$";
+    else {
+      const container = document.querySelector("main");
+      container.innerHTML += `    <div class="empty-basket">
+     <div class="text-dark-grey">No items...</div>
+ </div>`;
+      const totalContainer = document.querySelector(".total-container");
+      totalContainer.remove();
+    }
   });
 }
 
@@ -98,15 +106,119 @@ function loadFavStatus() {
     }
   });
 }
-function basketBtnEvent() {
-  $(".basket-btn").on("click", function (e) {
-    e.stopPropagation();
-    e.target.innerHTML = `    <div class="spinner-border" role="status">
-    <span class="sr-only"></span>
-  </div>`;
-    setTimeout(() => {
-      e.target.innerHTML = ` <i class="bi bi-basket2-fill"></i> Add To Basket`;
-    }, 1000);
+async function addBasket(prodId) {
+  const formData = new FormData();
+  formData.set("prodId", prodId);
+  formData.set("add", "true");
+  const response = await fetch("api-basket.php", {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+  return response;
+}
+async function removeBasket(prodId, whole = false) {
+  const formData = new FormData();
+  formData.set("prodId", prodId);
+  formData.set("delete", "true");
+  if (whole) formData.set("whole", "true");
+  const response = await fetch("api-basket.php", {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+  return response;
+}
+
+function bindBasketPageBtns() {
+  const plusBtns = document.querySelectorAll(".prod-plus");
+  const minusBtns = document.querySelectorAll(".prod-minus");
+  const trashBtns = document.querySelectorAll(".prod-trash");
+  const action = (transaction, btn, statusErr, statusDone) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      btn.setAttribute("disabled", "true");
+      const prodId = btn.dataset.prodid;
+      transaction(prodId).then(async (res) => {
+        const body = await res.json();
+        if (res.ok) {
+          new Toast({
+            message: statusDone,
+            type: "success",
+          });
+          updateTotalCount(body.total);
+        } else
+          new Toast({
+            message: statusErr,
+            type: "danger",
+          });
+        if (body.prodAmount > 0) {
+          btn.parentElement.firstChild.nextSibling.nextSibling.nextSibling.textContent =
+            body.prodAmount;
+          btn.removeAttribute("disabled");
+        } else document.querySelector("#id" + prodId).remove();
+
+        updateNavBasket(body.count);
+      });
+    });
+  };
+  plusBtns.forEach((btn) => {
+    action(
+      (prodId) => addBasket(prodId),
+      btn,
+      "Could not add to basket",
+      "Successfully added to basket"
+    );
+  });
+  minusBtns.forEach((btn) => {
+    action(
+      (prodId) => removeBasket(prodId, false),
+      btn,
+      "Could not remove from basket .",
+      "Successfully removed from basket"
+    );
+  });
+  trashBtns.forEach((btn) => {
+    action(
+      (prodId) => removeBasket(prodId, true),
+      btn,
+      "Could not remove from basket .",
+      "Successfully removed from basket"
+    );
   });
 }
+function bindBasketButton() {
+  const basketBtns = document.querySelectorAll(".basket-btn");
+  basketBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      btn.innerHTML = `<div class="spinner-border" role="status">
+    <span class="sr-only"></span>
+  </div>`;
+      const prodId = btn.dataset.prodid;
+      if (!prodId) window.location.href = "login.php";
+      addBasket(prodId).then(async (res) => {
+        if (res.ok) {
+          new Toast({
+            message: "Product added to basket.",
+            type: "success",
+          });
+          const body = await res.json();
+          updateNavBasket(body.count);
+        } else
+          new Toast({
+            message: "Could not add product to basket.",
+            type: "danger",
+          });
+        setTimeout(() => {
+          btn.innerHTML = ` <i class="bi bi-basket2-fill"></i> Add To Basket`;
+        }, 500);
+      });
+    });
+  });
+}
+bindBasketButton();
+bindBasketPageBtns();
 bindFavButton();

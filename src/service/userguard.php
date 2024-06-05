@@ -1,5 +1,5 @@
 <?php
-include "service/user-auth-utils.php";
+include_once "service/user-auth-utils.php";
 $userLogin = "login.php";
 
 $loginInfo = $getUserLoginInfo();

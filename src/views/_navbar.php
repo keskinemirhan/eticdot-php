@@ -3,6 +3,7 @@
 if (session_status() != PHP_SESSION_ACTIVE)
     session_start();
 $loggedIn = false;
+$basketCount = "";
 if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
     include "service/dbconnect.php";
     $userId = $_SESSION["userId"];
@@ -11,6 +12,12 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
         $username = $userQuery->fetch_row()[0];
         $loggedIn = true;
     }
+    $basketCount = $stmt_execute(
+        "select sum(amount) as sum from basketProduct where userId = ? ",
+        "s",
+        $userId
+    )->fetch_assoc()["sum"];
+    $loggedIn = true;
 }
 ?>
 <nav>
@@ -43,7 +50,7 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
         <?php } ?>
         <a href="basket.php" class="nav-btn nav-basket basket-icon">
             <i class="bi bi-basket2-fill text-blue"></i>
-            <span> <span class="basket-count-nav">0</span> Items</span></a>
+            <span> <span class="basket-count-nav"><?php echo $basketCount ?> </span> Items</span></a>
         <a href="favorites.php" class="nav-btn">
             <i class="bi bi-heart-fill text-blue"></i>
             <span>Favorites</span>
@@ -83,7 +90,7 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
         <?php } ?>
         <a href="basket.php" class="nav-m-btn">
             <i class="bi bi-basket2-fill text-blue"></i>
-            <span> <span class="basket-count-nav">0</span> Items</span>
+            <span> <span class="basket-count-nav"> <?php echo $basketCount ?></span> Items</span>
         </a>
         <a href="favorites.php" class="nav-m-btn">
             <i class="bi bi-heart-fill text-blue"></i>
@@ -161,7 +168,8 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
             box-shadow:
                 rgba(0, 0, 0, 0.16) 0px 3px 6px,
                 rgba(0, 0, 0, 0.23) 0px 3px 6px;

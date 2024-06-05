@@ -1,41 +1,77 @@
 <?php
-include "service/utils.php";
+include_once "service/utils.php";
+include_once "service/user-auth-utils.php";
+include_once "service/dbconnect.php";
+$messages = [];
+$userId = $getUserLoginInfo()->userId;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["logout"])) {
   if (session_status() != PHP_SESSION_ACTIVE) {
     session_start();
   }
   session_destroy();
   redirect(".");
+} else if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (!isblank_post("address")) {
+    $stmt_execute(
+      "update user set address = ? where id = ?",
+      "ss",
+      $_POST["address"],
+      $userId
+    );
+    array_push($messages, "Updated Address");
+  }
+  if (!isblank_post("phoneNumber")) {
+    $stmt_execute(
+      "update user set phoneNumber = ? where id = ?",
+      "ss",
+      $_POST["phoneNumber"],
+      $userId
+    );
+    array_push($messages, "Updated Phone Number");
+  }
 }
+$user = $stmt_execute(
+  "select email, name, surname, phoneNumber, address from user where id = ?",
+  "s",
+  $userId
+)->fetch_assoc();
+
+$purchases = $stmt_execute(
+  "select id, total, address, date_format(createdAt, '%Y-%m-%d at %H:%i') as createdAt from purchase where userId = ? order by createdAt desc",
+  "s",
+  $userId
+)->fetch_all(MYSQLI_ASSOC);
+
+
+
 ?>
 <div class="profile-container container mx-auto">
   <h1 class="p-header">Profile</h1>
   <div class="p-wrapper">
     <div class="picname">
       <div class="profile-pic">
-        <img src="/profile.png" alt="" srcset="" />
+        <img src="images/profile.png" alt="" srcset="" />
       </div>
       <div class="profile-ns">
-        <div class="profile-name"></div>
-        <div class="profile-surname"></div>
+        <div class="profile-name"><?php echo $user["name"] ?></div>
+        <div class="profile-surname"><?php echo $user["surname"] ?></div>
       </div>
     </div>
-    <div class="profile-info">
+    <form method="post" action="profile.php" class="profile-info">
       <div class="p-info">
         <div class="pi-name">Email</div>
-        <div class="pi-content p-email"></div>
+        <div class="pi-content p-email"><?php echo $user["email"] ?></div>
       </div>
       <div class="p-info">
         <div class="pi-name">Address</div>
-        <div class="pi-content">
-          Contoso Ltd 215 E Tasman Dr Po Box 65502 CA 95134 San Jose
-        </div>
+        <input class="pi-content" name="address" type="text" value="<?php echo $user["address"] ?>">
       </div>
-      <div class="p-info">
+      <div class=" p-info">
         <div class="pi-name">Phone Number</div>
-        <div class="pi-content">+90 540 400 44 44</div>
+        <input class="pi-content" name="phoneNumber" type="tel" value="<?php echo $user["phoneNumber"] ?>">
       </div>
-    </div>
+      <button class="auth-submit bg-success" type="submit">Update</button>
+    </form>
     <div class="d-flex justify-center">
       <form action="profile.php" method="post">
         <button type="submit" value="true" name="logout" class="auth-submit s-logout">Logout</button>
@@ -47,129 +83,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["logout"])) {
   <div class="order-frame">
     <h2 class="order-title">Orders</h2>
     <div class="orders-list">
-      <div class="order-item">
-        <div class="order-product-list">
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[0].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[0].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[0].price}$</div>
+      <?php foreach ($purchases as $purchase) { ?>
+        <div class="order-item">
+          <div class="order-product-list">
+            <?php
+            $purchaseItems = $stmt_execute(
+              "select p.id as id , p.image as image, p.name as prodName,
+           pu.amount as amount, pu.status as status,
+           pu.priceSnapshot as price  from product p,
+           purchase_item pu where pu.productId = p.id and
+           pu.purchaseId = ?",
+              "s",
+              $purchase["id"]
+            )->fetch_all(MYSQLI_ASSOC);
+            foreach ($purchaseItems as $purchaseItem) {
+            ?>
+              <div class="order-product">
+                <div class="oi-img">
+                  <img src="<?php echo $purchaseItem["image"] ?>" alt="" srcset="" />
+                </div>
+                <div class="oi-name"><?php echo $purchaseItem["prodName"] ?> </div>
+                <div class="oi-count">Amount: <?php echo $purchaseItem["amount"] ?></div>
+                <div class="oi-price"><?php echo $purchaseItem["price"] ?>$</div>
+                <div class="oi-price text-warning"><?php echo $purchaseItem["status"] ?></div>
+              </div>
+              <hr>
+            <?php } ?>
           </div>
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[1].imageUrl} alt="" srcset="" />
+          <div class="order-total">Total of <?php echo $purchase["total"] ?>$</div>
+          <div class="order-address">
+            <div class="a-header">Shipping Address</div>
+            <div class="a-info">
+              <?php echo $purchase["address"] ?>
             </div>
-            <div class="oi-name">{products[1].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[1].price}$</div>
           </div>
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[2].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[2].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[2].price}$</div>
+          <div class="order-address">
+            <div class="a-header">Ordered At</div>
+            <div class="a-info"><?php echo $purchase["createdAt"]; ?></div>
           </div>
         </div>
-        <div class="order-total">Total of 400$</div>
-        <div class="order-address">
-          <div class="a-header">Shipping Address</div>
-          <div class="a-info">
-            Contoso Ltd 215 E Tasman Dr Po Box 65502 CA 95134 San Jose
-          </div>
-        </div>
-        <div class="order-address">
-          <div class="a-header">Shipping Date</div>
-          <div class="a-info">19.07.2019 19:30 AM</div>
-        </div>
-      </div>
-      <div class="order-item">
-        <div class="order-product-list">
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[0].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[0].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[0].price}$</div>
-          </div>
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[1].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[1].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[1].price}$</div>
-          </div>
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[2].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[2].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[2].price}$</div>
-          </div>
-        </div>
-        <div class="order-total">Total of 400$</div>
-        <div class="order-address">
-          <div class="a-header">Shipping Address</div>
-          <div class="a-info">
-            Contoso Ltd 215 E Tasman Dr Po Box 65502 CA 95134 San Jose
-          </div>
-        </div>
-        <div class="order-address">
-          <div class="a-header">Shipping Date</div>
-          <div class="a-info">19.07.2019 19:30 AM</div>
-        </div>
-      </div>
-      <div class="order-item">
-        <div class="order-product-list">
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[0].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[0].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[0].price}$</div>
-          </div>
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[1].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[1].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[1].price}$</div>
-          </div>
-          <div class="order-product">
-            <div class="oi-img">
-              <img src={products[2].imageUrl} alt="" srcset="" />
-            </div>
-            <div class="oi-name">{products[2].prodName}</div>
-            <div class="oi-count">3 Pieces</div>
-            <div class="oi-price">{products[2].price}$</div>
-          </div>
-        </div>
-        <div class="order-total">Total of 400$</div>
-        <div class="order-address">
-          <div class="a-header">Shipping Address</div>
-          <div class="a-info">
-            Contoso Ltd 215 E Tasman Dr Po Box 65502 CA 95134 San Jose
-          </div>
-        </div>
-        <div class="order-address">
-          <div class="a-header">Shipping Date</div>
-          <div class="a-info">19.07.2019 19:30 AM</div>
-        </div>
-      </div>
+      <?php } ?>
+
+
     </div>
   </div>
 </div>
+</div>
 <div class="container mx-auto"></div>
 
-<style is:inline>
+<style>
   .order-total {
     border-top: 1px solid #b6b6b6;
     margin: 10px 20px;
@@ -202,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["logout"])) {
     border: 1px solid #b6b6b6;
     border-radius: 20px;
     margin-top: 20px;
-    background-color: #f1f1f1;
+    background-color: #F8F7F7;
   }
 
   .order-product img {
@@ -233,6 +195,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["logout"])) {
   .order-product {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    text-wrap: nowrap;
     justify-content: space-between;
     padding: 10px 20px 10px 20px;
     font-size: 17px;
@@ -300,21 +265,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["logout"])) {
   .profile-surname {
     text-transform: uppercase;
   }
+
+  .pi-content {
+    border: none;
+    outline: none;
+  }
+
+  .pi-content:focus {
+    outline: none;
+  }
 </style>
-<script is:inline>
-  const logoutBtn = document.querySelector(".s-logout");
-  const name = document.querySelector(".profile-name");
-  const surname = document.querySelector(".profile-surname");
-  const email = document.querySelector(".p-email");
-  const loggedUser = JSON.parse(localStorage.getItem("logUser"));
-  name.textContent = loggedUser.name;
-  surname.textContent = loggedUser.surname;
-  email.textContent = loggedUser.email;
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("logUser");
-    localStorage.removeItem("basketItems");
-    localStorage.removeItem("favItems");
-    localStorage.removeItem("totalBasket");
-    window.location.replace("");
-  });
+<script>
+  <?php if (count($messages) > 0) { ?>
+    new Toast({
+      message: "<?php foreach ($messages as $message) echo $message . " " ?>",
+      type: "success"
+    })
+  <?php } ?>
 </script>

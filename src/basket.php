@@ -1,4 +1,5 @@
 <?php
+include "service/userguard.php";
 $title = "Home";
 $childView = "content/_basket.php";
 
