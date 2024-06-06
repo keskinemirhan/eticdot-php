@@ -20,7 +20,7 @@
 
 <style>
     footer {
-        background-color: #bdbdbd;
+        background-color: #f2f2f2;
         margin-top: 40px;
         font-size: 18px;
         display: flex;

@@ -24,7 +24,7 @@ if ($loggedIn) {
     $stmt_execute(
       "select * from purchase_item pi, purchase p, product pr
   where p.id = pi.purchaseId and pi.productId = pr.id and p.userId = ? and 
-  p.id = ?
+  pr.id = ?
   ",
       "ss",
       $userId,
