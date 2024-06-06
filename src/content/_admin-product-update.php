@@ -5,7 +5,7 @@ if (!isset($_REQUEST["id"])) {
 }
 $id = $_REQUEST["id"];
 $stmt = $mysqli->prepare("SELECT 
-p.id,p.image, p.name, v.id, c.id ,p.price, p.prevPrice   
+p.id,p.image, p.name, v.id, c.id ,p.price, p.prevPrice, p.description
 from category as c, product as p, vendor as v
 where c.id = p.categoryId and v.id = p.vendorId and p.id = ?");
 
@@ -53,11 +53,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_REQUEST["delete"])) {
     }
     if (!$error) {
         $stmtUpdate = $mysqli->prepare("update product 
-        set name = ?, price = ?, prevPrice = ?, categoryId = ?, vendorId = ?  where id = ?");
+        set name = ?, price = ?, description = ?, prevPrice = ?, categoryId = ?, vendorId = ?  where id = ?");
         $stmtUpdate->bind_param(
-            "sddsss",
+            "sdsdsss",
             $_POST["name"],
             $_POST["price"],
+            $_POST["desc"],
             $_POST["prevPrice"],
             $_POST["categoryId"],
             $_POST["vendorId"],
@@ -66,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_REQUEST["delete"])) {
         $stmtUpdate->execute();
         $stmtUpdate->close();
         $stmt = $mysqli->prepare("SELECT 
-        p.id,p.image, p.name, v.id, c.id ,p.price, p.prevPrice   
+        p.id,p.image, p.name, v.id, c.id ,p.price, p.prevPrice, p.description   
         from category as c, product as p, vendor as v
         where c.id = p.categoryId and v.id = p.vendorId and p.id = ?");
         $stmt->bind_param("s", $id);
@@ -103,6 +104,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_REQUEST["delete"])) {
         <input class="form-control" value="<?php echo $product[2] ?>" type="text" name="name" id="name">
     </div>
     <div class="mb-3">
+        <label class="form-label" for="desc">Description: </label>
+        <input class="form-control" type="text" value="<?php echo $product[7] ?>" name="desc" id="desc">
+    </div>
+    <div class="mb-3">
         <label class="form-label" for="price">Price: </label>
         <input class="form-control" value="<?php echo $product[5] ?>" type="number" , step="0.01" name="price" id="price">
     </div>
@@ -110,6 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_REQUEST["delete"])) {
         <label class="form-label" for="prevPrice">Previous Price: </label>
         <input class="form-control" type="number" value="<?php echo $product[6] ?>" step="0.01" name="prevPrice" id="prevPrice">
     </div>
+
 
     <div class="mb-3">
         <label class="form-label" for="categoryId">Category: </label>

@@ -26,9 +26,9 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
         <span class="logo-name d-none d-lg-block">Etic<span class="logo-dot text-blue">dot</span>.com</span>
     </a>
     <div class="nav-search d-none d-lg-block">
-        <form>
+        <form method="get" action="search.php">
             <div class="bar-wrapper">
-                <input type="text" class="nav-search-bar input-text" name="" id="" />
+                <input type="text" class="nav-search-bar input-text" name="q" id="" />
             </div>
             <button class="nav-search-btn" type="submit">
                 <i class="bi bi-search text-blue search-icon"></i>
@@ -67,9 +67,9 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
     </div>
 
     <div class="nav-search">
-        <form>
+        <form method="get" action="search.php">
             <div class="bar-wrapper">
-                <input type="text" class="nav-search-bar input-text" name="" id="" />
+                <input type="text" class="nav-search-bar input-text" name="q" id="" />
             </div>
             <button class="nav-search-btn" type="submit">
                 <i class="bi bi-search text-blue search-icon"></i>
@@ -99,13 +99,6 @@ if (isset($_SESSION["userId"]) && isset($_SESSION["userIsLoggedIn"])) {
     </div>
 
     <script>
-        const searchButtons = document.querySelectorAll(".nav-search-btn");
-        searchButtons.forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                e.preventDefault();
-                window.location.replace("search");
-            });
-        });
         const profileIndicators = document.querySelectorAll(".profile");
         const profileIcons = document.querySelectorAll(".user-icon");
         const profileLinks = document.querySelectorAll(".nav-profile");

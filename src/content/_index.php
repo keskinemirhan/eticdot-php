@@ -2,10 +2,12 @@
 include "service/user-auth-utils.php";
 include "service/dbconnect.php";
 include "views/_prodcard.php";
+include_once "views/_categorycard.php";
 $loginInfo = $getUserLoginInfo();
 $loggedIn = $loginInfo->loggedIn;
 $userId = $loginInfo->userId;
 $products;
+$categories = $mysqli->query("select name, image from category");
 if ($loggedIn) {
     $products = $stmt_execute(
         "SELECT 
@@ -30,7 +32,7 @@ JOIN
         ",
         "si",
         $userId,
-        4
+        9
     );
 } else {
     $products = $stmt_execute(
@@ -48,7 +50,7 @@ FROM
     product p,
     vendor v where p.vendorId = v.id LIMIT ?;",
         "i",
-        4
+        9
     );
 }
 ?>
@@ -62,13 +64,13 @@ FROM
             <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
         <div class="carousel-inner">
-            <a href="/#sale" class="carousel-item active" data-bs-interval="1000">
+            <a href="#sale" class="carousel-item active" data-bs-interval="1000">
                 <img src="images/sale1.jpg" class="d-block w-100" alt="..." />
             </a>
-            <a href="/search" class="carousel-item" data-bs-interval="2000">
+            <a href="search.php?q=electronics" class="carousel-item" data-bs-interval="2000">
                 <img src="images/sale2.jpg" class="d-block w-100" alt="..." />
             </a>
-            <a href="/category/Home" class="carousel-item">
+            <a href="search.php?q=home" class="carousel-item">
                 <img src="images/sale3.jpg" class="d-block w-100" alt="..." />
             </a>
         </div>
@@ -88,15 +90,10 @@ FROM
     </div>
     <div class="item-rack">
         <?php
-        while ($product = $products->fetch_assoc()) {
-            $c_prod_card(
-                $product["id"],
-                $product["name"],
-                $product["price"],
-                $product["prevPrice"],
-                $product["vendorName"],
-                $product["image"],
-                $product["isFavorite"] == "1"
+        while ($category = $categories->fetch_assoc()) {
+            categoryCard(
+                $category["name"],
+                $category["image"]
             );
         }
 
@@ -110,6 +107,19 @@ FROM
         </div>
         <div class="item-rack">
             <?php
+            $pc = 0;
+            while (($product = $products->fetch_assoc()) && $pc < 4) {
+                $c_prod_card(
+                    $product["id"],
+                    $product["name"],
+                    $product["price"],
+                    $product["prevPrice"],
+                    $product["vendorName"],
+                    $product["image"],
+                    $product["isFavorite"] == "1"
+                );
+                $pc++;
+            }
 
             ?>
         </div>
@@ -121,7 +131,21 @@ FROM
         <div class="item-rack">
             <?php
 
+            while (($product = $products->fetch_assoc()) && $pc < 10) {
+                $c_prod_card(
+                    $product["id"],
+                    $product["name"],
+                    $product["price"],
+                    $product["prevPrice"],
+                    $product["vendorName"],
+                    $product["image"],
+                    $product["isFavorite"] == "1"
+                );
+                $pc++;
+            }
+
             ?>
+
         </div>
     </div>
 </div>

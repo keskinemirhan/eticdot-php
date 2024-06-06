@@ -1,10 +1,18 @@
 <?php
 include_once("service/user-auth-utils.php");
+include_once("service/dbconnect.php");
 $loginInfo = $getUserLoginInfo();
 
 static $prod_card_script_exists = false;
 
-$c_prod_card = function ($prod_id, $prod_name, $price, $prev_price, $vendor_name, $image_url, $is_favorite = false) use ($loginInfo) {
+$c_prod_card = function ($prod_id, $prod_name, $price, $prev_price, $vendor_name, $image_url, $is_favorite = false) use ($loginInfo, $stmt_execute) {
+    $rating = $stmt_execute(
+        "SELECT coalesce(avg(rating),0) as rating from review
+        where prodId = ?",
+        "s",
+        $prod_id
+    )->fetch_assoc()["rating"];
+    $rating = floatval($rating);
     $loggedIn = $loginInfo->loggedIn;
     $item = [
         "price" =>  $price,
@@ -16,7 +24,7 @@ $c_prod_card = function ($prod_id, $prod_name, $price, $prev_price, $vendor_name
     ];
 ?>
 
-    <a href="/product/<?php echo $prod_id ?>" class="prod-card">
+    <a href="product.php?id=<?php echo $prod_id ?>" class="prod-card">
         <div class="price-band bg-blue">
             <div class="price">
                 <div class="current-price"><?php echo $price . "$" ?></div>
@@ -51,11 +59,12 @@ $c_prod_card = function ($prod_id, $prod_name, $price, $prev_price, $vendor_name
             <span class="prod-name"><?php echo $prod_name ?></span>
         </div>
         <div class="prod-rating text-blue">
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-fill"></i>
-            <i class="bi bi-star-half"></i>
-            <i class="bi bi-star"></i>
+            <?php for ($i = 0; $i <= 4; $i++) {
+                if ($rating >= 1) echo "<i class='bi bi-star-fill'></i>";
+                else if ($rating <= 0) echo "<i class='bi bi-star'></i>";
+                else  echo "<i class='bi bi-star-half'></i>";
+                $rating = $rating - 1;
+            } ?>
         </div>
         <div class="basket-btn-wrapper">
             <button <?php if ($loggedIn) echo "data-prodid='$prod_id'" ?> class="basket-btn bg-green ">

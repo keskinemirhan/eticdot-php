@@ -102,7 +102,7 @@ $purchases = $stmt_execute(
                 <div class="oi-img">
                   <img src="<?php echo $purchaseItem["image"] ?>" alt="" srcset="" />
                 </div>
-                <div class="oi-name"><?php echo $purchaseItem["prodName"] ?> </div>
+                <a href="product.php?id=<?php echo $purchaseItem["id"] ?>" class="oi-name"><?php echo $purchaseItem["prodName"] ?> </a>
                 <div class="oi-count">Amount: <?php echo $purchaseItem["amount"] ?></div>
                 <div class="oi-price"><?php echo $purchaseItem["price"] ?>$</div>
                 <div class="oi-price text-warning"><?php echo $purchaseItem["status"] ?></div>

@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         empty($_POST["vendorId"]) ||
         empty($_POST["price"]) ||
         empty($_POST["prevPrice"]) ||
+        empty($_POST["desc"]) ||
         !isset($_FILES["image"])
     ) {
         $error = true;
@@ -28,13 +29,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $vendorId = $_POST["vendorId"];
             $price = $_POST["price"];
             $prevPrice = $_POST["prevPrice"];
+            $desc = $_POST["desc"];
 
             $stmtInsert = $mysqli->prepare("INSERT INTO product
-             VALUES (uuid(),? ,? ,? ,?, ?, ? )");
+             VALUES (uuid(),? ,?, ? ,? ,?, ?, ? )");
             $stmtInsert->bind_param(
-                "sddsss",
+                "sdsdsss",
                 $name,
                 $price,
+                $desc,
                 $prevPrice,
                 $image,
                 $categoryId,
@@ -62,6 +65,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="mb-3">
         <label class="form-label" for="name">Name: </label>
         <input class="form-control" type="name" name="name" id="name">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="desc">Description: </label>
+        <input class="form-control" type="text" name="desc" id="desc">
     </div>
     <div class="mb-3">
         <label class="form-label" for="price">Price: </label>
