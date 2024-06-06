@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $desc = $_POST["desc"];
 
             $stmtInsert = $mysqli->prepare("INSERT INTO product
-             VALUES (uuid(),? ,? ,? ,?, ?, ? )");
+             VALUES (uuid(),? ,?, ?, ? ,?, ?, ? )");
             $stmtInsert->bind_param(
                 "sdsdsss",
                 $name,

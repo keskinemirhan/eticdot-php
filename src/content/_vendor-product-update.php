@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_REQUEST["delete"])) {
         $stmtUpdate = $mysqli->prepare("update product 
         set name = ?, price = ?, description = ?, prevPrice = ?, categoryId = ?, vendorId = ?  where id = ?");
         $stmtUpdate->bind_param(
-            "sddsss",
+            "sdsdsss",
             $_POST["name"],
             $_POST["price"],
             $_POST["desc"],

@@ -1,5 +1,8 @@
 _other
 src/images/*
 !src/images/profile.png
+!src/images/sale3.jpg
+!src/images/sale1.jpg
+!src/images/sale2.jpg
 composer.lock
 vendor/
