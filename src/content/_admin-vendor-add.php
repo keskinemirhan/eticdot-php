@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$error) {
             $stmtInsert = $mysqli->prepare("INSERT INTO vendor VALUES (uuid(), ?, ?, ? )");
             $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-            $stmtInsert->bind_param("sss", $name, $email, $password);
+            $stmtInsert->bind_param("sss", $name, $email, $passwordHash);
             $stmtInsert->execute();
         }
     }
