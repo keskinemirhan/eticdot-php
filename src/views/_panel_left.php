@@ -23,8 +23,7 @@ $admin = $stmt->get_result()->fetch_row();
 
         <button data-target="order" class="panel-item panel-drop-btn"><i class="bi bi-truck"></i> Orders</button>
         <div id="order" class="panel-dropdown">
-            <button class="panel-item">Order List</button>
-            <button class="panel-item">Payment Panel</button>
+            <a href="admin-order-list.php" class="panel-item">Order List</a>
         </div>
         <button data-target="category" class="panel-item panel-drop-btn"><i class="bi bi-tags-fill"></i> Categories</button>
         <div id="category" class="panel-dropdown">
