@@ -1,4 +1,5 @@
 _other
-src/images
+src/images/*
+!src/images/profile.png
 composer.lock
 vendor/
