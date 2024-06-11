@@ -1,6 +1,6 @@
 <?php
 include "service/userguard.php";
-$title = "Home";
+$title = "Profile";
 $childView = "content/_profile.php";
 
 include "layout/site-layout.php";

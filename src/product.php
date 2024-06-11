@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && (!isset($_GET["id"]) || empty($_GET["
 } else {
     $prodId = $_REQUEST["id"];
 }
-$title = "Home";
+$title = "Product";
 $childView = "content/_product.php";
 
 include "layout/site-layout.php";
